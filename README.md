@@ -12,7 +12,7 @@
 
 ## Web Scraping
 
-1. Altere o caminho de destino do seu download nas últimas linhas do botBTG.py
+1. Altere o caminho de destino do seu download nas linha 146 do botBTG.py
 
 2. Crie o ambiente virtual (realize esse passo apenas uma vez)
 ```bash
@@ -52,4 +52,4 @@ python3 botBTG.py
 
 O chat bot tem como objetivo coletar de maneira amigável e natual as respostas necessárias para fazer a simulação já existente da própria BTG que dirá qual o investimento ideal para aquele usuário.
 
-Com os dados coletados o código em python realiza um web scraping para coletar o melhor investimento para determinada situação. Essa informação fica salva em um JSON 
+Com os dados coletados o código em python realiza um web scraping para coletar o melhor investimento para determinada situação com base no simulador da BTG. Essa informação fica salva em um JSON
