@@ -40,7 +40,7 @@ app.post('/api/chat', async (req, res) => {
         Responda sempre de forma curta e direta, sem formatação (como tentar deixar o texto em negrito).
         `,
 
-      perfil_arriscado: `
+      perfil_sofisticado: `
         Você agora está atendendo um cliente com perfil arriscado. 
         Ele busca altos retornos e entende os riscos de perda. 
         Se o cliente apenas cumprimentar ou fizer perguntas genéricas, responda de forma breve e natural, sem mencionar investimentos.
@@ -80,7 +80,7 @@ app.post('/api/chat', async (req, res) => {
     let resposta = response.data.choices[0].message.content;
     if (modo === 'perfil_conservador') resposta = `🔒 ${resposta}`;
     if (modo === 'perfil_moderado') resposta = `⚖️ ${resposta}`;
-    if (modo === 'perfil_arriscado') resposta = `☣️ ${resposta}`;
+    if (modo === 'perfil_sofisticado') resposta = `☣️ ${resposta}`;
 
     res.json({ reply: resposta });
     
@@ -88,7 +88,7 @@ app.post('/api/chat', async (req, res) => {
     console.error("Erro na API:", error.response?.data || error.message);
     res.status(500).json({ 
       error: "Oops! Algo deu errado. Tente novamente!",
-      details: modo === 'perfil_arriscado' ? "Até meu código tá bugado, que surpresa..." : "Erro no servidor"
+      details: modo === 'perfil_sofisticado' ? "Até meu código tá bugado, que surpresa..." : "Erro no servidor"
     });
   }
 });
@@ -96,5 +96,5 @@ app.post('/api/chat', async (req, res) => {
 // Inicia o servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
-  console.log("Modos disponíveis: conservador, moderado, arriscado");
+  console.log("Modos disponíveis: conservador, moderado, sofisticado");
 });

@@ -7,10 +7,12 @@ let dadosInvestimento = {
     valor_mensal: null,
     duracao: null,
     objetivo: null,
-    relacao: null
+    relacao: null,
+    perfil_investimento: null
 };
 let emColeta = false;
 let historico = [];
+
 
 function alterarModo(modo){
   modoAtual = modo;
@@ -117,7 +119,7 @@ function gerarPromptInvestimento(textoUsuario) {
 
     ${
       dadosInvestimento.objetivo === null
-        ? "Por favor, peça ao usuário que diga claramente o objetivo do investimento (ex: viagem, aposentadoria, segurança financeira, aumentar patrimônio, IRPF etc.) antes de prosseguir com qualquer recomendação."
+        ? "Por favor, peça ao usuário que diga claramente o objetivo do investimento (indiretamente dando exemplos de segurança financeira, aumentar patrimônio, IRPF etc - sem usar estes termos) antes de prosseguir com qualquer recomendação."
         : "Se todos os dados já tiverem sido coletados, apenas faça um resumo objetivo das informações e siga para as sugestões de investimento."
     }
   `;
@@ -199,6 +201,41 @@ Mensagem do usuário: """${textoUsuario}"""
   }
 }
 
+async function determinarPerfilInvestimento() {
+  const prompt = `
+Você é um analista financeiro do BTG Pactual. 
+Com base nas informações abaixo, determine o PERFIL DO INVESTIMENTO ideal.
+Perfis possíveis: "Conservador", "Moderado", "Sofisticado".
+
+Dados:
+Valor inicial: ${dadosInvestimento.valor_inicial}
+Valor mensal: ${dadosInvestimento.valor_mensal}
+Duração: ${dadosInvestimento.duracao} anos
+Objetivo: ${dadosInvestimento.objetivo}
+Relação com investimento: ${dadosInvestimento.relacao}
+
+Critérios gerais:
+- Conservador: objetivos de segurança, prazos curtos (<2 anos), pouca experiência.
+- Moderado: prazos médios (2–5 anos), algum risco, alguma experiência.
+- Sofisticado: prazos longos, grandes valores, foco em patrimônio, experiência alta.
+
+Responda apenas com o nome do perfil, nada mais.
+  `;
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: prompt, modo: modoAtual }),
+    });
+    const data = await response.json();
+    const perfil = (data.reply || "").trim();
+    dadosInvestimento.perfil_investimento = perfil;
+    console.log("🏁 Perfil do investimento determinado:", perfil);
+  } catch (err) {
+    console.error("Erro ao determinar perfil do investimento:", err);
+  }
+}
+
 async function enviarMensagem(event) {
   event.preventDefault();
 
@@ -259,7 +296,7 @@ async function enviarMensagem(event) {
 
       - Conservador: evita riscos, prefere segurança, prioriza estabilidade e liquidez.
       - Moderado: aceita algum risco, busca equilíbrio entre segurança e rentabilidade.
-      - Arriscado: gosta de risco, busca alta rentabilidade e entende possíveis perdas. 
+      - Sofisticado: gosta de risco, busca alta rentabilidade e entende possíveis perdas. 
 
       Regras:
       - Sempre considere o perfil do cliente antes de responder.
@@ -299,6 +336,10 @@ async function enviarMensagem(event) {
   // Resumo final quando coleta estiver completa
   if (emColeta && coletaCompleta()) {
     emColeta = false;
+
+    // Determina o perfil do investimento antes de mostrar o resumo
+    await determinarPerfilInvestimento();
+
     const resumo = `
         Investimento completo:
         Valor inicial: ${dadosInvestimento.valor_inicial}
@@ -306,11 +347,12 @@ async function enviarMensagem(event) {
         Duração: ${dadosInvestimento.duracao} anos
         Objetivo: ${dadosInvestimento.objetivo}
         Relação com investimento: ${dadosInvestimento.relacao}
+        Perfil do investimento: ${dadosInvestimento.perfil_investimento}
     `;
     const respostaFinal = document.createElement('article');
     respostaFinal.classList.add('resposta');
     respostaFinal.innerHTML = `<p>${resumo}</p>`;
     chat.appendChild(respostaFinal);
     chat.scrollTop = chat.scrollHeight;
-  }
+}
 }
