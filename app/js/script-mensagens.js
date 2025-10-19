@@ -13,6 +13,39 @@ let dadosInvestimento = {
 let emColeta = false;
 let historico = [];
 
+// ===================================================================
+// NOVA FUNÇÃO PARA SALVAR OS DADOS EM UM ARQUIVO JSON
+// ===================================================================
+/**
+ * Converte o objeto dadosInvestimento em uma string JSON e inicia o download
+ * de um arquivo .json no navegador.
+ */
+function salvarDadosEmJSON() {
+  // 1. Converte o objeto para uma string JSON bem formatada (com 2 espaços de indentação)
+  const dadosString = JSON.stringify(dadosInvestimento, null, 2);
+
+  // 2. Cria um Blob (objeto de dados brutos) do tipo JSON
+  const blob = new Blob([dadosString], { type: 'application/json' });
+
+  // 3. Cria uma URL temporária para o Blob
+  const url = URL.createObjectURL(blob);
+
+  // 4. Cria um elemento de link (<a>) para o download
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'dadosInvestimento.json'; // Nome do arquivo que será baixado
+  document.body.appendChild(a); // Adiciona o link ao corpo do documento
+
+  // 5. Simula o clique no link para iniciar o download
+  a.click();
+
+  // 6. Limpeza: remove o link e revoga a URL para liberar memória
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  console.log("📄 Dados de investimento salvos em dadosInvestimento.json");
+}
+// ===================================================================
 
 function alterarModo(modo){
   modoAtual = modo;
@@ -351,8 +384,11 @@ async function enviarMensagem(event) {
     `;
     const respostaFinal = document.createElement('article');
     respostaFinal.classList.add('resposta');
-    respostaFinal.innerHTML = `<p>${resumo}</p>`;
+    respostaFinal.innerHTML = `<p><pre>${resumo}</pre></p>`;
     chat.appendChild(respostaFinal);
     chat.scrollTop = chat.scrollHeight;
-}
+      
+    // CHAMA A FUNÇÃO PARA SALVAR O JSON
+    salvarDadosEmJSON();
+  }
 }

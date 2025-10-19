@@ -93,6 +93,49 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
+const { spawn } = require('child_process');
+
+app.post('/api/processar-investimento', async (req, res) => {
+  const dados = req.body;
+
+  try {
+    const python = spawn('python3', ['botBTG.py']);
+    let resultado = '';
+    let erro = '';
+
+    // Captura saída normal do Python
+    python.stdout.on('data', data => {
+      resultado += data.toString();
+    });
+
+    // Captura erros do Python
+    python.stderr.on('data', data => {
+      erro += data.toString();
+    });
+
+    python.on('close', code => {
+      if (code === 0) {
+        try {
+          const json = JSON.parse(resultado);
+          res.json(json);
+        } catch {
+          res.json({ raw_output: resultado.trim() });
+        }
+      } else {
+        res.status(500).json({ error: erro || 'Erro no script Python' });
+      }
+    });
+
+    // Envia os dados via stdin (direto, sem arquivo)
+    python.stdin.write(JSON.stringify(dados));
+    python.stdin.end();
+
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
 // Inicia o servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);

@@ -5,6 +5,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchElementException
 import json
 import sys
+import time
+import os
 
 class perfilInvest:
         def __init__(self,pes,esp,oti,listComp):
@@ -59,10 +61,10 @@ class CrawlerBTG:
                 max -= 1
         raise NoSuchElementException
     
-    def get_Dados(self):
-        invesIni = "52213,21"
-        aplMensal = "1233"
-        durAnos = "15"
+    def get_Dados(self,arquivo):
+        invesIni = str(arquivo['valor_inicial'])
+        aplMensal = str(arquivo['valor_mensal'])
+        durAnos = arquivo['duracao']
         objetivo = 1
         relacao = 1
 
@@ -131,8 +133,15 @@ class CrawlerBTG:
             print(f"Valor da Exceção: {valor_excecao}")
             print(f"Traceback: {traceback}")
 
-
+while True:
+    try:
+        arquivo = open("/home/iasd/Downloads/dadosInvestimento.json", 'r', encoding='utf-8') #Mude para o caminho do seu download
+        break
+    except: 
+        time.sleep(2)
+arquivo = json.load(arquivo)
 site = CrawlerBTG()
-site.get_Dados()
+site.get_Dados(arquivo)
+os.remove("/home/iasd/Downloads/dadosInvestimento.json")
 with open('lista_dados.json', 'w', encoding='utf-8') as arquivo:
     json.dump([perfil.dados for perfil in site.perfis], arquivo, indent=1, ensure_ascii=False)
