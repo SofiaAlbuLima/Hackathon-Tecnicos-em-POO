@@ -1,6 +1,6 @@
 # Instruões de instalação
 
-## Chat bot
+## Chat bot:
 
 1. Instale as dependências com ```npm install```
 
@@ -10,7 +10,7 @@
 
 4. Abra no navegador o link mostrado no terminal
 
-## Web Scraping
+## Web Scraping:
 
 1. Altere o caminho de destino do seu download nas linha 146 do botBTG.py
 
@@ -48,8 +48,12 @@ pip install -r requirements.txt
 python3 botBTG.py
 ```
 
-# Como funciona
-
-O chat bot tem como objetivo coletar de maneira amigável e natual as respostas necessárias para fazer a simulação já existente da própria BTG que dirá qual o investimento ideal para aquele usuário.
-
-Com os dados coletados o código em python realiza um web scraping para coletar o melhor investimento para determinada situação com base no simulador da BTG. Essa informação fica salva em um JSON
+## API REST:
+- Java 17 ```sudo apt install openjdk-17-jdk -y```
+- SpringBoot 3.2.3
+- Maven s  ```sudo apt install maven -y```
+- Lombok
+- JDK
+- MySQL  ```sudo apt install mysql-server -y```
+Importe a pasta investimento no Eclipse como um projeto Maven existente, configure o banco MySQL conforme o application.properties e execute a classe InvestimentoApplication como Spring Boot App.
+A API será iniciada localmente em http://localhost:8080
