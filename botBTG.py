@@ -65,8 +65,17 @@ class CrawlerBTG:
         invesIni = str(arquivo['valor_inicial'])
         aplMensal = str(arquivo['valor_mensal'])
         durAnos = arquivo['duracao']
-        objetivo = 1
         relacao = 1
+        objetivo = 1
+        obj = arquivo['objetivo']
+        if 'Segurança' in obj: objetivo = 2
+        elif 'Economizar' in obj: objetivo = 3
+        elif 'Outros' in obj: objetivo = 4
+        rel = arquivo['relacao']
+        if 'Nunca investiu e entende pouco' in rel: relacao = 2
+        elif 'Já investiu algumas vezes e entende um pouco' in rel: relacao = 3
+        elif 'Está investindo e entende pouco' in rel: relacao = 4
+        elif 'Investe sempre e tem experiência' in rel: relacao = 5
 
         #fixo
         nome = "John Doe"
