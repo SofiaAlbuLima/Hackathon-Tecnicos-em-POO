@@ -374,25 +374,131 @@ async function enviarMensagem(event) {
 
   historico.push({ role: "user", content: texto });
 
-  // 🔹 1) CONSULTA de investimentos (mantém como na versão atual)
+  // 🔹 1) CONSULTA de investimentos
   if (/consultar|listar|ver/i.test(texto) && /investiment/i.test(texto)) {
-    // ... (seu código atual de consulta e exibição de lista)
-    return;
+    const resposta = document.createElement('article');
+    resposta.classList.add('resposta');
+    resposta.innerHTML = `<p>🔍 Consultando seus investimentos...</p>`;
+    chat.appendChild(resposta);
+    chat.scrollTop = chat.scrollHeight;
+
+    try {
+      const lista = await consultarInvestimento();
+
+      if (!lista || lista.length === 0) {
+        resposta.innerHTML = `<p>Você ainda não possui investimentos registrados.</p>`;
+        return;
+      }
+
+      // aqui você pode preencher sua lista, etc.
+      window.listaInvestimentos = lista;
+      window.modoSelecaoID = true;
+      resposta.innerHTML = `
+        <p>✅ Aqui estão seus investimentos:</p>
+        ${lista
+          .map(
+            inv =>
+              `<p>ID: ${inv.idInvestimento} — Valor Inicial: R$ ${inv.valorInicial.toFixed(2)} — Duração: ${inv.duracaoEmAnos} anos</p>`
+          )
+          .join('')}
+        <p>Digite o <strong>ID</strong> do investimento para ver os detalhes.</p>
+      `;
+      chat.scrollTop = chat.scrollHeight;
+      return;
+    } catch (err) {
+      console.error("Erro ao consultar investimentos:", err);
+      resposta.innerHTML = `<p>❌ Erro ao consultar investimentos.</p>`;
+      chat.scrollTop = chat.scrollHeight;
+      return;
+    }
   }
 
-  // 🔹 2) Seleção de ID (mantém igual)
+  // 🔹 2) Seleção de ID
   if (window.modoSelecaoID) {
-    // ... (seu código atual)
+    const id = parseInt(texto);
+
+    if (isNaN(id)) {
+      const aviso = document.createElement('article');
+      aviso.classList.add('resposta');
+      aviso.innerHTML = `<p>⚠️ Por favor, digite apenas o número do ID do investimento.</p>`;
+      chat.appendChild(aviso);
+      chat.scrollTop = chat.scrollHeight;
+      return;
+    }
+
+    const inv = window.listaInvestimentos.find(i => i.idInvestimento === id);
+
+    if (!inv) {
+      const aviso = document.createElement('article');
+      aviso.classList.add('resposta');
+      aviso.innerHTML = `<p>❌ Nenhum investimento encontrado com o ID ${id}. Digite outro ID.</p>`;
+      chat.appendChild(aviso);
+      chat.scrollTop = chat.scrollHeight;
+      return;
+    }
+
+    const resposta = document.createElement('article');
+    resposta.classList.add('resposta');
+    resposta.innerHTML = `
+      <p><strong>📄 Detalhes do investimento ID ${inv.idInvestimento}</strong></p>
+      <p>Valor inicial: R$ ${inv.valorInicial.toFixed(2)}</p>
+      <p>Valor mensal: R$ ${inv.valorMensal.toFixed(2)}</p>
+      <p>Duração: ${inv.duracaoEmAnos} anos</p>
+      <p>Objetivo: ${inv.objetivo}</p>
+      <p>Perfil: ${inv.perfilInvestimento ?? "—"}</p>
+      <p>-----------------------------------</p>
+      <p>Digite <strong>variação ${inv.idInvestimento}</strong> para ver a variação desse investimento.</p>
+      <p>Ou digite <strong>consultar investimentos</strong> para voltar à lista.</p>
+    `;
+    chat.appendChild(resposta);
+    chat.scrollTop = chat.scrollHeight;
+
+    window.modoSelecaoID = false;
+    window.idSelecionado = id;
     return;
   }
 
-  // 🔹 3) Consulta de variação (mantém igual)
+  // 🔹 3) Consulta de variação
   if (/variaç|variacao/i.test(texto)) {
-    // ... (seu código atual)
+    const idMatch = texto.match(/\d+/);
+    if (!idMatch) {
+      const aviso = document.createElement('article');
+      aviso.classList.add('resposta');
+      aviso.innerHTML = `<p>⚠️ Informe o ID da variação. Exemplo: variação 2</p>`;
+      chat.appendChild(aviso);
+      chat.scrollTop = chat.scrollHeight;
+      return;
+    }
+
+    const id = parseInt(idMatch[0]);
+
+    const resposta = document.createElement('article');
+    resposta.classList.add('resposta');
+    resposta.innerHTML = `<p>📊 Consultando variação do investimento ID ${id}...</p>`;
+    chat.appendChild(resposta);
+    chat.scrollTop = chat.scrollHeight;
+
+    try {
+      const variacao = await consultarVariacaoInvestimento(id);
+      resposta.innerHTML = `
+        <p><strong>📈 Variação do investimento ID ${variacao.idInvestimento}</strong></p>
+        <p>Data: ${variacao.dataConsultaAleatoria}</p>
+        <p>Valor real: R$ ${variacao.valorReal.toFixed(2)}</p>
+        <p>Valor esperado: R$ ${variacao.valorEsperado.toFixed(2)}</p>
+        <p>Variação: ${variacao.variacaoPercentual.toFixed(2)}%</p>
+        <p>-----------------------------------</p>
+        <p>Digite <strong>consultar investimentos</strong> para ver a lista novamente.</p>
+      `;
+    } catch (err) {
+      console.error("Erro ao consultar variação:", err);
+      resposta.innerHTML = `<p>❌ Não foi possível consultar a variação.</p>`;
+    }
+
+    chat.scrollTop = chat.scrollHeight;
     return;
   }
 
-  // 🔹 4) Fluxo da IA de investimento (reintegrado da versão antiga)
+  // 🔹 4) Fluxo da IA de investimento
   let mensagemParaAPI = texto;
 
   if (/investimento|investir/i.test(texto) && !emColeta) {
@@ -426,7 +532,7 @@ async function enviarMensagem(event) {
     mensagemParaAPI = `[Modo: ${modoAtual}]\n${texto}`;
   }
 
-  // 🔹 5) Chamada ao endpoint /api/chat (mantém igual à antiga)
+  // 🔹 5) Chamada ao endpoint /api/chat
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -466,21 +572,6 @@ async function enviarMensagem(event) {
   }
 }
 
-
-
-async function salvarInvestimento(dados) {
-  try{
-    const resp = await fetch("https://localhost:8087/investimentos",{
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dados)
-    });
-    const result = await resp.json();
-    console.log("Investimento salvo:", result);
-  }catch(err){
-    consolo.log("Erro ao salvar investimento:", err);
-  }
-}
 
 const API_URL = "http://localhost:8087/api/s1/investimento/usuario/1";
 
