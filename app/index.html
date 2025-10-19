@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente Investimentos</title>
+    <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>  
+    <header>  
+    </header>
+    <main>
+        <aside class="opcoes_chat">
+            <form class="modos_chat">  
+                <h2>Selecione seu modo de chat:</h2>
+                <input type="radio" id="modo1" name="modo_chat" value="modo_alegre" checked>
+                    <label for="modo1">Conservador</label>
+                <input type="radio" id="modo2" name="modo_chat" value="modo_professor">
+                    <label for="modo2">Moderado</label>
+                <input type="radio" id="modo3" name="modo_chat" value="modo_sarcastico">
+                    <label for="modo3">Arriscado</label>
+            </form>
+        </aside>
+
+        <section class="conteudo_central">
+            <section class="historico_chat" id="chat">
+            </section>
+
+            <section class="mensagem_chat">
+                <form onsubmit="enviarMensagem(event)" class="enviar_pergunta">
+                    <input type="text" id="mensagem" placeholder="Pergunte ao assistente BTG!">
+                    <input type="submit" value=">">
+                </form>
+            </section>
+        </section>       
+    </main>
+
+    <script src="/app/js/script-mensagens.js"></script>
+</body>
+</html>
