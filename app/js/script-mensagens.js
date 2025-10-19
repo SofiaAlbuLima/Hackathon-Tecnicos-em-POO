@@ -380,7 +380,7 @@ async function enviarMensagem(event) {
 
 async function salvarInvestimento(dados) {
   try{
-    const resp = await fetch("https://localhost:8080/investimentos",{
+    const resp = await fetch("https://localhost:8087/investimentos",{
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dados)
@@ -394,7 +394,7 @@ async function salvarInvestimento(dados) {
 
 async function consultarInvestimento() {
   try {
-    const resp = await fetch("http://localhost:8080/investimentos");
+    const resp = await fetch("http://localhost:8087/investimentos");
     return resp;
   } catch (err) {
     console.error("Erro ao consultar investimentos:", err);
