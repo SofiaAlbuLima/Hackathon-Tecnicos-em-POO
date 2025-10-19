@@ -1,15 +1,15 @@
 [
  {
-  "Pessimista": "Cenário pessimista: R$ 14.805,57",
-  "Esperado": "Cenário esperado: R$ 15.761,21",
-  "Otimista": "Cenário otimista: R$ 16.783,34",
+  "Pessimista": "Cenário pessimista: R$ 90.648,83",
+  "Esperado": "Cenário esperado: R$ 96.638,20",
+  "Otimista": "Cenário otimista: R$ 103.000,66",
   "Composicao": [
    [
     "Retorno Absoluto (MM)",
     [
      [
       "Armor Axe FICFIM",
-      "R$ 1.750,00"
+      "R$ 3.500,00"
      ]
     ]
    ],
@@ -18,11 +18,11 @@
     [
      [
       "LCA - Banco Original 94.50% CDI\nLCA",
-      "R$ 1.000,00"
+      "R$ 2.000,00"
      ],
      [
       "BTG CDB Plus FIRF CrPr",
-      "R$ 750,00"
+      "R$ 1.500,00"
      ]
     ]
    ],
@@ -31,31 +31,40 @@
     [
      [
       "ARX Elbrus Incentivado Infra FIRF",
-      "R$ 750,00"
+      "R$ 1.500,00"
      ],
      [
       "BTG Debentures Incentivadas IPCA Infra FICFIRF",
-      "R$ 750,00"
+      "R$ 1.500,00"
      ]
     ]
    ]
   ]
  },
  {
-  "Pessimista": "Cenário pessimista: R$ 14.510,29",
-  "Esperado": "Cenário esperado: R$ 16.014,72",
-  "Otimista": "Cenário otimista: R$ 17.684,48",
+  "Pessimista": "Cenário pessimista: R$ 88.886,46",
+  "Esperado": "Cenário esperado: R$ 99.724,94",
+  "Otimista": "Cenário otimista: R$ 111.775,35",
   "Composicao": [
+   [
+    "Retorno Absoluto (MM)",
+    [
+     [
+      "Armor Axe FICFIM",
+      "R$ 3.500,00"
+     ]
+    ]
+   ],
    [
     "Inflação",
     [
      [
       "ARX Elbrus Incentivado Infra FIRF",
-      "R$ 1.000,00"
+      "R$ 1.500,00"
      ],
      [
       "Absolute Hidra IPCA Infra FICFIRF CrPr",
-      "R$ 1.000,00"
+      "R$ 1.500,00"
      ]
     ]
    ],
@@ -64,16 +73,7 @@
     [
      [
       "SPX Patriot FICFIA",
-      "R$ 1.000,00"
-     ]
-    ]
-   ],
-   [
-    "Retorno Absoluto (MM)",
-    [
-     [
-      "Armor Axe FICFIM",
-      "R$ 1.000,00"
+      "R$ 2.000,00"
      ]
     ]
    ],
@@ -84,25 +84,16 @@
   ]
  },
  {
-  "Pessimista": "Cenário pessimista: R$ 14.583,38",
-  "Esperado": "Cenário esperado: R$ 15.927,52",
-  "Otimista": "Cenário otimista: R$ 17.403,28",
+  "Pessimista": "Cenário pessimista: R$ 89.031,22",
+  "Esperado": "Cenário esperado: R$ 99.225,47",
+  "Otimista": "Cenário otimista: R$ 110.490,68",
   "Composicao": [
-   [
-    "Pós-fixado",
-    [
-     [
-      "BTG CDB Plus FIRF CrPr",
-      "R$ 1.500,00"
-     ]
-    ]
-   ],
    [
     "Inflação",
     [
      [
       "Absolute Hidra IPCA Infra FICFIRF CrPr",
-      "R$ 1.500,00"
+      "R$ 3.000,00"
      ]
     ]
    ],
@@ -111,7 +102,16 @@
     [
      [
       "Real Investor FIF Ações",
-      "R$ 1.000,00"
+      "R$ 2.500,00"
+     ]
+    ]
+   ],
+   [
+    "Pós-fixado",
+    [
+     [
+      "BTG CDB Plus FIRF CrPr",
+      "R$ 2.500,00"
      ]
     ]
    ],

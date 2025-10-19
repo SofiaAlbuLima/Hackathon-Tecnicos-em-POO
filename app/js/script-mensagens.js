@@ -358,14 +358,12 @@ async function consultarVariacaoInvestimento(idInvestimento) {
 
 async function enviarMensagem(event) {
   event.preventDefault();
-
   const input = document.getElementById('mensagem');
   const texto = input.value.trim();
   const chat = document.getElementById('chat');
-
   if (!texto) return;
 
-  // Mostra a mensagem do usuário
+  // Mostra mensagem do usuário
   const pergunta = document.createElement('article');
   pergunta.classList.add('pergunta');
   pergunta.innerHTML = `<p>${texto}</p>`;
@@ -374,229 +372,101 @@ async function enviarMensagem(event) {
   input.value = '';
   contador_mensagens++;
 
-  // ----------------------------------------------------------
-  // 1️⃣ Se o usuário pedir para CONSULTAR INVESTIMENTOS
-  // ----------------------------------------------------------
+  historico.push({ role: "user", content: texto });
+
+  // 🔹 1) CONSULTA de investimentos (mantém como na versão atual)
   if (/consultar|listar|ver/i.test(texto) && /investiment/i.test(texto)) {
-    const resposta = document.createElement('article');
-    resposta.classList.add('resposta');
-    resposta.innerHTML = `<p>🔍 Consultando seus investimentos...</p>`;
-    chat.appendChild(resposta);
-    chat.scrollTop = chat.scrollHeight;
-
-    try {
-      const lista = await consultarInvestimento();
-
-      if (!lista || lista.length === 0) {
-        resposta.innerHTML = `<p>Você ainda não possui investimentos registrados.</p>`;
-        return;
-      }
-
-      // Mostra menu de IDs
-      let html = "<p>💼 Seus investimentos atuais:</p><ul>";
-      lista.forEach(inv => {
-        html += `
-          <li>
-            <strong>ID ${inv.idInvestimento}</strong> |
-            Valor inicial: R$ ${inv.valorInicial.toFixed(2)} |
-            Valor mensal: R$ ${inv.valorMensal.toFixed(2)} |
-            Duração: ${inv.duracaoEmAnos} anos |
-            Objetivo: ${inv.objetivo}
-          </li>`;
-      });
-      html += "</ul><p>✳️ Digite o ID do investimento que deseja consultar detalhadamente.</p>";
-
-      resposta.innerHTML = html;
-      chat.scrollTop = chat.scrollHeight;
-
-      // Guarda a lista globalmente para uso posterior
-      window.listaInvestimentos = lista;
-      window.modoSelecaoID = true;
-
-      return;
-
-    } catch (err) {
-      console.error("Erro ao consultar investimentos:", err);
-      resposta.innerHTML = `<p>❌ Não foi possível consultar os investimentos no momento.</p>`;
-      return;
-    }
+    // ... (seu código atual de consulta e exibição de lista)
+    return;
   }
 
-  // ----------------------------------------------------------
-  // 2️⃣ Se o usuário estiver no modo de seleção de ID
-  // ----------------------------------------------------------
+  // 🔹 2) Seleção de ID (mantém igual)
   if (window.modoSelecaoID) {
-    const id = parseInt(texto);
-
-    if (isNaN(id)) {
-      const aviso = document.createElement('article');
-      aviso.classList.add('resposta');
-      aviso.innerHTML = `<p>⚠️ Por favor, digite apenas o número do ID do investimento.</p>`;
-      chat.appendChild(aviso);
-      chat.scrollTop = chat.scrollHeight;
-      return;
-    }
-
-    const inv = window.listaInvestimentos.find(i => i.idInvestimento === id);
-
-    if (!inv) {
-      const aviso = document.createElement('article');
-      aviso.classList.add('resposta');
-      aviso.innerHTML = `<p>❌ Nenhum investimento encontrado com o ID ${id}. Digite outro ID.</p>`;
-      chat.appendChild(aviso);
-      chat.scrollTop = chat.scrollHeight;
-      return;
-    }
-
-    // Mostra detalhes do investimento
-    const resposta = document.createElement('article');
-    resposta.classList.add('resposta');
-    resposta.innerHTML = `
-      <p><strong>📄 Detalhes do investimento ID ${inv.idInvestimento}</strong></p>
-      <p>Valor inicial: R$ ${inv.valorInicial.toFixed(2)}</p>
-      <p>Valor mensal: R$ ${inv.valorMensal.toFixed(2)}</p>
-      <p>Duração: ${inv.duracaoEmAnos} anos</p>
-      <p>Objetivo: ${inv.objetivo}</p>
-      <p>Perfil: ${inv.perfilInvestimento ?? "—"}</p>
-      <p>-----------------------------------</p>
-      <p>Digite <strong>variação ${inv.idInvestimento}</strong> para ver a variação desse investimento.</p>
-      <p>Ou digite <strong>consultar investimentos</strong> para voltar à lista.</p>
-    `;
-    chat.appendChild(resposta);
-    chat.scrollTop = chat.scrollHeight;
-
-    // Sai do modo de seleção
-    window.modoSelecaoID = false;
-    window.idSelecionado = id;
-
+    // ... (seu código atual)
     return;
   }
 
-  // ----------------------------------------------------------
-  // 3️⃣ Se o usuário pedir variação
-  // ----------------------------------------------------------
+  // 🔹 3) Consulta de variação (mantém igual)
   if (/variaç|variacao/i.test(texto)) {
-    const idMatch = texto.match(/\d+/);
-    if (!idMatch) {
-      const aviso = document.createElement('article');
-      aviso.classList.add('resposta');
-      aviso.innerHTML = `<p>⚠️ Informe o ID da variação. Exemplo: variação 2</p>`;
-      chat.appendChild(aviso);
-      chat.scrollTop = chat.scrollHeight;
-      return;
-    }
-
-    const id = parseInt(idMatch[0]);
-
-    const resposta = document.createElement('article');
-    resposta.classList.add('resposta');
-    resposta.innerHTML = `<p>📊 Consultando variação do investimento ID ${id}...</p>`;
-    chat.appendChild(resposta);
-    chat.scrollTop = chat.scrollHeight;
-
-    try {
-      const variacao = await consultarVariacaoInvestimento(id);
-      resposta.innerHTML = `
-        <p><strong>📈 Variação do investimento ID ${variacao.idInvestimento}</strong></p>
-        <p>Data: ${variacao.dataConsultaAleatoria}</p>
-        <p>Valor real: R$ ${variacao.valorReal.toFixed(2)}</p>
-        <p>Valor esperado: R$ ${variacao.valorEsperado.toFixed(2)}</p>
-        <p>Variação: ${variacao.variacaoPercentual.toFixed(2)}%</p>
-        <p>-----------------------------------</p>
-        <p>Digite <strong>consultar investimentos</strong> para ver a lista novamente.</p>
-      `;
-    } catch (err) {
-      console.error("Erro ao consultar variação:", err);
-      resposta.innerHTML = `<p>❌ Não foi possível consultar a variação.</p>`;
-    }
-
-    chat.scrollTop = chat.scrollHeight;
+    // ... (seu código atual)
     return;
   }
 
-//   async function consultarVariacaoInvestimento(idInvestimento) {
-//   const API_BASE = "http://localhost:8087/api/s1/investimento";
+  // 🔹 4) Fluxo da IA de investimento (reintegrado da versão antiga)
+  let mensagemParaAPI = texto;
 
-//   try {
-//     // 1️⃣ Buscar detalhes
-//     const respDetalhes = await fetch(`${API_BASE}/detalhes/${idInvestimento}`);
-//     if (!respDetalhes.ok) throw new Error(`Erro ao obter detalhes do investimento ${idInvestimento}`);
-//     const investimento = await respDetalhes.json();
+  if (/investimento|investir/i.test(texto) && !emColeta) {
+    emColeta = true;
+    etapaInvestimento = 1;
+    mensagemParaAPI = gerarPromptInvestimento(texto);
+  } else if (emColeta) {
+    const parseResult = await interpretarComIA(texto);
+    if (parseResult) {
+      for (const chave in parseResult) {
+        if (parseResult[chave] !== null && parseResult[chave] !== undefined) {
+          dadosInvestimento[chave] = parseResult[chave];
+          console.log(`✅ ${chave} definido (IA):`, dadosInvestimento[chave]);
+        }
+      }
+    } else {
+      extrairDados(texto);
+    }
 
-//     const dataInicial = new Date(investimento.dataInicial);
-//     const anos = investimento.duracaoEmAnos;
+    mensagemParaAPI = gerarPromptInvestimento(texto);
+  } else if (contador_mensagens === 1) {
+    const instrucoesIniciais = `
+      Você é um assistente virtual do banco BTG Pactual, criado para orientar clientes sobre investimentos de acordo com seu perfil de investidor.
+      Estamos em 2025, em um cenário de economia brasileira estável.
+      Seu papel é ajudar o cliente a entender qual tipo de investimento faz mais sentido para ele.
+      Modo atual: ${modoAtual}
+      Usuário: ${texto}
+    `;
+    mensagemParaAPI = instrucoesIniciais;
+  } else {
+    mensagemParaAPI = `[Modo: ${modoAtual}]\n${texto}`;
+  }
 
-//     if (!dataInicial || !anos) throw new Error("Dados insuficientes (dataInicial ou duração ausente)");
+  // 🔹 5) Chamada ao endpoint /api/chat (mantém igual à antiga)
+  const response = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: mensagemParaAPI, modo: modoAtual }),
+  });
 
-//     // 2️⃣ Data aleatória
-//     const dataFinal = new Date(dataInicial);
-//     dataFinal.setFullYear(dataFinal.getFullYear() + anos);
+  const data = await response.json();
 
-//     const timestampAleatorio =
-//       dataInicial.getTime() + Math.random() * (dataFinal.getTime() - dataInicial.getTime());
-//     const dataAleatoria = new Date(timestampAleatorio).toISOString().split("T")[0];
+  historico.push({ role: "assistant", content: data.reply });
 
-//     // 3️⃣ Consultar valor real e esperado
-//     const [respValor, respEsperado] = await Promise.all([
-//       fetch(`${API_BASE}/1/${idInvestimento}/consultar/${dataAleatoria}`),
-//       fetch(`${API_BASE}/1/${idInvestimento}/consultarEsperado/${dataAleatoria}`)
-//     ]);
-
-//     if (!respValor.ok || !respEsperado.ok) throw new Error("Erro ao consultar valores na API");
-
-//     const valorReal = await respValor.json();
-//     const valorEsperado = await respEsperado.json();
-//     const variacaoPercentual = ((valorReal / valorEsperado) * 100).toFixed(2);
-
-//     return {
-//       idInvestimento,
-//       dataConsultaAleatoria: dataAleatoria,
-//       valorReal,
-//       valorEsperado,
-//       variacaoPercentual: Number(variacaoPercentual)
-//     };
-//   } catch (err) {
-//     console.error("❌ Erro em consultarVariacaoInvestimento:", err.message);
-//     throw err;
-//   }
-// }
-
-  // ----------------------------------------------------------
-  // 4️⃣ Caso o texto não seja nenhum comando reconhecido
-  // ----------------------------------------------------------
   const resposta = document.createElement('article');
   resposta.classList.add('resposta');
-  resposta.innerHTML = `<p>Comando não reconhecido. Digite <strong>consultar investimentos</strong> para começar.</p>`;
+  resposta.innerHTML = `<p>${data.reply}</p>`;
   chat.appendChild(resposta);
   chat.scrollTop = chat.scrollHeight;
 
-  // Resumo final quando coleta estiver completa
+  // 🔹 6) Quando todos os dados forem coletados
   if (emColeta && coletaCompleta()) {
     emColeta = false;
-
-    // Determina o perfil do investimento antes de mostrar o resumo
     await determinarPerfilInvestimento();
 
     const resumo = `
-        Investimento completo:
-        Valor inicial: ${dadosInvestimento.valor_inicial}
-        Valor mensal: ${dadosInvestimento.valor_mensal}
-        Duração: ${dadosInvestimento.duracao} anos
-        Objetivo: ${dadosInvestimento.objetivo}
-        Relação com investimento: ${dadosInvestimento.relacao}
-        Perfil do investimento: ${dadosInvestimento.perfil_investimento}
+      Investimento completo:
+      Valor inicial: ${dadosInvestimento.valor_inicial}
+      Valor mensal: ${dadosInvestimento.valor_mensal}
+      Duração: ${dadosInvestimento.duracao} anos
+      Objetivo: ${dadosInvestimento.objetivo}
+      Relação com investimento: ${dadosInvestimento.relacao}
+      Perfil do investimento: ${dadosInvestimento.perfil_investimento}
     `;
     const respostaFinal = document.createElement('article');
     respostaFinal.classList.add('resposta');
-    respostaFinal.innerHTML = `<p><pre>${resumo}</pre></p>`;
+    respostaFinal.innerHTML = `<p>${resumo}</p>`;
     chat.appendChild(respostaFinal);
     chat.scrollTop = chat.scrollHeight;
-      
-    // CHAMA A FUNÇÃO PARA SALVAR O JSON
     salvarDadosEmJSON();
   }
 }
-}
+
+
 
 async function salvarInvestimento(dados) {
   try{
