@@ -138,24 +138,24 @@ function coletaCompleta() {
 async function interpretarComIA(textoUsuario) {
   // Prompt que será enviado ao seu endpoint de chat. Pede-se apenas JSON sem explicações.
   const prompt = `
-Você é um analisador de mensagens em português. Receberá uma mensagem de usuário e deve RESPONDER
-EXCLUSIVAMENTE com um JSON válido (sem texto, sem explicações) com as seguintes chaves:
-- valor_inicial: número (float) ou null
-- valor_mensal: número (float) ou null
-- duracao: inteiro (anos) ou null
-- objetivo: uma das strings {"Aumentar patrimônio","Segurança financeira","Economizar com IRPF","Outros"} ou null
-- relacao: uma das strings {"Nunca investiu e não entende nada","Nunca investiu e entende pouco",
-  "Já investiu algumas vezes e entende um pouco","Está investindo e entende pouco",
-  "Investe sempre e tem experiência"} ou null
+    Você é um analisador de mensagens em português. Receberá uma mensagem de usuário e deve RESPONDER
+    EXCLUSIVAMENTE com um JSON válido (sem texto, sem explicações) com as seguintes chaves:
+    - valor_inicial: número (float) ou null
+    - valor_mensal: número (float) ou null
+    - duracao: inteiro (anos) ou null
+    - objetivo: uma das strings {"Aumentar patrimônio","Segurança financeira","Economizar com IRPF","Outros"} ou null
+    - relacao: uma das strings {"Nunca investiu e não entende nada","Nunca investiu e entende pouco",
+      "Já investiu algumas vezes e entende um pouco","Está investindo e entende pouco",
+      "Investe sempre e tem experiência"} ou null
 
-Regras:
-1) Interprete números escritos por extenso (ex: "dez mil", "dois mil e quinhentos") e formatos com "mil", "k", "R$" etc.
-2) Normalizar para número puro (ex: "R$ 2.500,00" => 2500).
-3) Duração deve ser em anos. Se usuário disser "6 meses", converta para 0.5 (ou retorne o número de anos). Preferência por anos - se menos de 1 ano, retornar decimal (ex: 0.5).
-4) Se não houver informação para alguma chave, retornar null para ela.
-5) Retorne apenas o JSON (objeto), nada mais.
+    Regras:
+    1) Interprete números escritos por extenso (ex: "dez mil", "dois mil e quinhentos") e formatos com "mil", "k", "R$" etc.
+    2) Normalizar para número puro (ex: "R$ 2.500,00" => 2500).
+    3) Duração deve ser em anos. Se usuário disser "6 meses", converta para 0.5 (ou retorne o número de anos). Preferência por anos - se menos de 1 ano, retornar decimal (ex: 0.5).
+    4) Se não houver informação para alguma chave, retornar null para ela.
+    5) Retorne apenas o JSON (objeto), nada mais.
 
-Mensagem do usuário: """${textoUsuario}"""
+    Mensagem do usuário: """${textoUsuario}"""
   `;
 
   try {
@@ -203,23 +203,23 @@ Mensagem do usuário: """${textoUsuario}"""
 
 async function determinarPerfilInvestimento() {
   const prompt = `
-Você é um analista financeiro do BTG Pactual. 
-Com base nas informações abaixo, determine o PERFIL DO INVESTIMENTO ideal.
-Perfis possíveis: "Conservador", "Moderado", "Sofisticado".
+  Você é um analista financeiro do BTG Pactual. 
+  Com base nas informações abaixo, determine o PERFIL DO INVESTIMENTO ideal.
+  Perfis possíveis: "Conservador", "Moderado", "Sofisticado".
 
-Dados:
-Valor inicial: ${dadosInvestimento.valor_inicial}
-Valor mensal: ${dadosInvestimento.valor_mensal}
-Duração: ${dadosInvestimento.duracao} anos
-Objetivo: ${dadosInvestimento.objetivo}
-Relação com investimento: ${dadosInvestimento.relacao}
+  Dados:
+  Valor inicial: ${dadosInvestimento.valor_inicial}
+  Valor mensal: ${dadosInvestimento.valor_mensal}
+  Duração: ${dadosInvestimento.duracao} anos
+  Objetivo: ${dadosInvestimento.objetivo}
+  Relação com investimento: ${dadosInvestimento.relacao}
 
-Critérios gerais:
-- Conservador: objetivos de segurança, prazos curtos (<2 anos), pouca experiência.
-- Moderado: prazos médios (2–5 anos), algum risco, alguma experiência.
-- Sofisticado: prazos longos, grandes valores, foco em patrimônio, experiência alta.
+  Critérios gerais:
+  - Conservador: objetivos de segurança, prazos curtos (<2 anos), pouca experiência.
+  - Moderado: prazos médios (2–5 anos), algum risco, alguma experiência.
+  - Sofisticado: prazos longos, grandes valores, foco em patrimônio, experiência alta.
 
-Responda apenas com o nome do perfil, nada mais.
+  Responda apenas com o nome do perfil, nada mais.
   `;
   try {
     const response = await fetch('/api/chat', {
@@ -240,7 +240,7 @@ async function enviarMensagem(event) {
   event.preventDefault();
 
   const input = document.getElementById('mensagem');
-  const texto = input.value;
+  const texto = input.value.trim(); // ⚠️ corrigido: faltavam parênteses
   const chat = document.getElementById('chat');
 
   if (!texto) return;
@@ -258,52 +258,74 @@ async function enviarMensagem(event) {
 
   let mensagemParaAPI = texto;
 
-  // Detecta início do modo de investimento
+  // 🔍 1) DETECTA PEDIDO DE CONSULTA DE INVESTIMENTOS
+  if (/\b(consultar|ver|mostrar|listar|acompanhar)\b.*investiment/i.test(texto)) {
+    const resposta = document.createElement('article');
+    resposta.classList.add('resposta');
+    resposta.innerHTML = `<p>Consultando seus investimentos...</p>`;
+    chat.appendChild(resposta);
+    chat.scrollTop = chat.scrollHeight;
+
+    try {
+      const resp = await consultarInvestimento();
+      const lista = await resp.json();
+
+      if (!lista || lista.length === 0) {
+        resposta.innerHTML = `<p>Você ainda não possui investimentos registrados.</p>`;
+      } else {
+        let html = "<p>Seus investimentos atuais:</p><ul>";
+        lista.forEach(inv => {
+          html += `<li>
+            Valor inicial: R$ ${inv.valor_inicial.toFixed(2)} |
+            Valor mensal: R$ ${inv.valor_mensal.toFixed(2)} |
+            Duração: ${inv.duracao} anos |
+            Objetivo: ${inv.objetivo}
+          </li>`;
+        });
+        html += "</ul>";
+        resposta.innerHTML = html;
+      }
+    } catch (err) {
+      console.error("Erro ao consultar investimentos:", err);
+      resposta.innerHTML = `<p>Não foi possível consultar os investimentos no momento.</p>`;
+    }
+
+    chat.scrollTop = chat.scrollHeight;
+    return; // ⛔ Evita continuar o fluxo normal
+  }
+
+  // 💬 Detecta início do modo de investimento
   if (/investimento|investir/i.test(texto) && !emColeta) {
     emColeta = true;
     etapaInvestimento = 1;
     mensagemParaAPI = gerarPromptInvestimento(texto);
   }
-  // Continua no modo de investimento
+  // 🧠 Continua o modo de coleta de investimento
   else if (emColeta) {
-    // 1) Primeiro, tente interpretar usando a IA (mais robusto)
     const parseResult = await interpretarComIA(texto);
 
     if (parseResult) {
-        for (const chave in parseResult) {
-            if (parseResult[chave] !== null && parseResult[chave] !== undefined) {
-                dadosInvestimento[chave] = parseResult[chave];
-                console.log(`✅ ${chave} definido (IA):`, dadosInvestimento[chave]);
-            }
+      for (const chave in parseResult) {
+        if (parseResult[chave] !== null && parseResult[chave] !== undefined) {
+          dadosInvestimento[chave] = parseResult[chave];
+          console.log(`✅ ${chave} definido (IA):`, dadosInvestimento[chave]);
         }
+      }
     } else {
-      // Fallback: se IA falhar, usa seu extrairDados atual
-      extrairDados(texto);
+      extrairDados(texto); // fallback
     }
 
     mensagemParaAPI = gerarPromptInvestimento(texto);
   }
-  // Mensagem inicial (modo normal)
-  else if(contador_mensagens === 1){
+  // 👋 Primeira mensagem (inicial)
+  else if (contador_mensagens === 1) {
     const instrucoesIniciais = `
       Você é um assistente virtual do banco BTG Pactual, criado para orientar clientes sobre investimentos de acordo com seu perfil de investidor.
       Estamos em 2025, em um cenário de economia brasileira estável, com juros moderados e crescente interesse em investimentos de renda variável e produtos digitais.
       Seu papel é ajudar o cliente a entender qual tipo de investimento faz mais sentido para ele e responder dúvidas sobre produtos financeiros.
 
       Você deve responder de forma curta, direta e sem formatação de texto.
-      Seu objetivo é ajudar o cliente a tomar decisões básicas de investimento de acordo com o perfil de investidor informado.
-      Há três perfis possíveis:
-
-      - Conservador: evita riscos, prefere segurança, prioriza estabilidade e liquidez.
-      - Moderado: aceita algum risco, busca equilíbrio entre segurança e rentabilidade.
-      - Sofisticado: gosta de risco, busca alta rentabilidade e entende possíveis perdas. 
-
-      Regras:
-      - Sempre considere o perfil do cliente antes de responder.
-      - Responda apenas o necessário, de forma objetiva e simples.
-      - Se o cliente fizer perguntas sobre investimentos (como renda fixa, ações, fundos, etc.), explique rapidamente se é adequado ao perfil e por quê.
-      - Não use formatação, listas ou emojis.
-      - Não invente informações.
+      Há três perfis possíveis: Conservador, Moderado e Sofisticado.
       
       Modo atual: ${modoAtual}
       Usuário: ${texto}
@@ -313,11 +335,11 @@ async function enviarMensagem(event) {
     mensagemParaAPI = `[Modo: ${modoAtual}]\n${texto}`;
   }
 
-  // Chamada normal para gerar a resposta do assistente (mensagem a exibir)
+  // 📡 Chamada à API do chat (resposta do assistente)
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
+    body: JSON.stringify({
       message: mensagemParaAPI,
       modo: modoAtual
     }),
@@ -333,26 +355,49 @@ async function enviarMensagem(event) {
   chat.appendChild(resposta);
   chat.scrollTop = chat.scrollHeight;
 
-  // Resumo final quando coleta estiver completa
+  // 🏁 Exibe resumo final quando coleta estiver completa
   if (emColeta && coletaCompleta()) {
     emColeta = false;
 
-    // Determina o perfil do investimento antes de mostrar o resumo
     await determinarPerfilInvestimento();
 
     const resumo = `
-        Investimento completo:
-        Valor inicial: ${dadosInvestimento.valor_inicial}
-        Valor mensal: ${dadosInvestimento.valor_mensal}
-        Duração: ${dadosInvestimento.duracao} anos
-        Objetivo: ${dadosInvestimento.objetivo}
-        Relação com investimento: ${dadosInvestimento.relacao}
-        Perfil do investimento: ${dadosInvestimento.perfil_investimento}
+      Investimento completo:
+      Valor inicial: ${dadosInvestimento.valor_inicial}
+      Valor mensal: ${dadosInvestimento.valor_mensal}
+      Duração: ${dadosInvestimento.duracao} anos
+      Objetivo: ${dadosInvestimento.objetivo}
+      Relação com investimento: ${dadosInvestimento.relacao}
+      Perfil do investimento: ${dadosInvestimento.perfil_investimento}
     `;
     const respostaFinal = document.createElement('article');
     respostaFinal.classList.add('resposta');
     respostaFinal.innerHTML = `<p>${resumo}</p>`;
     chat.appendChild(respostaFinal);
     chat.scrollTop = chat.scrollHeight;
+  }
 }
+
+async function salvarInvestimento(dados) {
+  try{
+    const resp = await fetch("https://localhost:8080/investimentos",{
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dados)
+    });
+    const result = await resp.json();
+    console.log("Investimento salvo:", result);
+  }catch(err){
+    consolo.log("Erro ao salvar investimento:", err);
+  }
+}
+
+async function consultarInvestimento() {
+  try {
+    const resp = await fetch("http://localhost:8080/investimentos");
+    return resp;
+  } catch (err) {
+    console.error("Erro ao consultar investimentos:", err);
+    throw err;
+  }
 }
