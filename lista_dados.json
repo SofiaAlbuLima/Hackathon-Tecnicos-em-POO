@@ -1,0 +1,179 @@
+[
+ {
+  "Pessimista": "Cenário pessimista: R$ 685.009,59",
+  "Esperado": "Cenário esperado: R$ 752.365,75",
+  "Otimista": "Cenário otimista: R$ 826.620,95",
+  "Composicao": [
+   [
+    "Pós-fixado",
+    [
+     [
+      "LCA - Banco Original 94.50% CDI\nLCA",
+      "R$ 11.971,47"
+     ],
+     [
+      "BTG CDB Plus FIRF CrPr",
+      "R$ 10.088,41"
+     ]
+    ]
+   ],
+   [
+    "Inflação",
+    [
+     [
+      "Absolute Hidra IPCA Infra FICFIRF CrPr",
+      "R$ 10.068,03"
+     ],
+     [
+      "Legacy Compound Deb Incentivadas Infra IPCA FICFIRF CrPr",
+      "R$ 10.034,07"
+     ]
+    ]
+   ],
+   [
+    "Retorno Absoluto (MM)",
+    [
+     [
+      "Armor Axe FICFIM",
+      "R$ 3.150,02"
+     ],
+     [
+      "Tavola Equity Hedge 15 FIM",
+      "R$ 2.593,44"
+     ]
+    ]
+   ],
+   [
+    "Renda Variável",
+    [
+     [
+      "SPX Patriot FICFIA",
+      "R$ 2.793,26"
+     ],
+     [
+      "Kapitalo Tarkus FICFIA Subclasse Geral",
+      "R$ 1.514,54"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "Pessimista": "Cenário pessimista: R$ 690.856,71",
+  "Esperado": "Cenário esperado: R$ 822.372,18",
+  "Otimista": "Cenário otimista: R$ 979.326,37",
+  "Composicao": [
+   [
+    "Inflação",
+    [
+     [
+      "Absolute Hidra IPCA Infra FICFIRF CrPr",
+      "R$ 12.159,22"
+     ],
+     [
+      "ARX Elbrus Incentivado Infra FIRF",
+      "R$ 10.765,28"
+     ]
+    ]
+   ],
+   [
+    "Pós-fixado",
+    [
+     [
+      "LCA - Banco Original 94.50% CDI\nLCA",
+      "R$ 6.265,58"
+     ],
+     [
+      "BTG CDB Plus FIRF CrPr",
+      "R$ 5.221,32"
+     ]
+    ]
+   ],
+   [
+    "Renda Variável",
+    [
+     [
+      "SPX Patriot FICFIA",
+      "R$ 5.850,22"
+     ],
+     [
+      "Kapitalo Tarkus FICFIA Subclasse Geral",
+      "R$ 3.336,39"
+     ]
+    ]
+   ],
+   [
+    "Retorno Absoluto (MM)",
+    [
+     [
+      "Armor Axe FICFIM",
+      "R$ 4.459,21"
+     ],
+     [
+      "Tavola Equity Hedge 15 FIM",
+      "R$ 4.155,96"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "Pessimista": "Cenário pessimista: R$ 659.444,49",
+  "Esperado": "Cenário esperado: R$ 873.017,15",
+  "Otimista": "Cenário otimista: R$ 1.156.576,05",
+  "Composicao": [
+   [
+    "Inflação",
+    [
+     [
+      "ARX Elbrus Incentivado Infra FIRF",
+      "R$ 8.870,38"
+     ],
+     [
+      "BTG Debentures Incentivadas IPCA Infra FICFIRF",
+      "R$ 8.109,60"
+     ]
+    ]
+   ],
+   [
+    "Renda Variável",
+    [
+     [
+      "SPX Patriot FICFIA",
+      "R$ 10.462,19"
+     ],
+     [
+      "Kapitalo Tarkus FICFIA Subclasse Geral",
+      "R$ 5.188,30"
+     ]
+    ]
+   ],
+   [
+    "Retorno Absoluto (MM)",
+    [
+     [
+      "Armor Axe FICFIM",
+      "R$ 5.815,36"
+     ],
+     [
+      "Tavola Equity Hedge 15 FIM",
+      "R$ 5.644,64"
+     ]
+    ]
+   ],
+   [
+    "Pós-fixado",
+    [
+     [
+      "BTG CDB Plus FIRF CrPr",
+      "R$ 5.221,33"
+     ],
+     [
+      "LCA - Banco Original 94.50% CDI\nLCA",
+      "R$ 2.901,44"
+     ]
+    ]
+   ]
+  ]
+ }
+]
