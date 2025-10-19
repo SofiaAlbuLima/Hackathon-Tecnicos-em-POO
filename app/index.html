@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agente Investimentos</title>
-    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="/app/css/main.css">
 </head>
 <body>  
-    <header>  
-    </header>
     <main>
         <aside class="opcoes_chat">
             <form class="modos_chat">  
                 <h2>Selecione seu modo de chat:</h2>
+                <div class="opcoes">
                 <input type="radio" id="modo1" name="modo_chat" value="perfil_conservador" checked>
                     <label for="modo1">Conservador</label>
                 <input type="radio" id="modo2" name="modo_chat" value="perfil_moderado">
                     <label for="modo2">Moderado</label>
                 <input type="radio" id="modo3" name="modo_chat" value="perfil_sofisticado">
                     <label for="modo3">Sofisticado</label>
+                </div>
             </form>
         </aside>
 
@@ -29,7 +29,7 @@
             <section class="mensagem_chat">
                 <form onsubmit="enviarMensagem(event)" class="enviar_pergunta">
                     <input type="text" id="mensagem" placeholder="Pergunte ao assistente BTG!">
-                    <input type="submit" value=">">
+                    <input type="submit" id="enviar" value=">">
                 </form>
             </section>
         </section>       
