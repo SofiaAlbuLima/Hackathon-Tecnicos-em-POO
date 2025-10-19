@@ -143,14 +143,15 @@ class CrawlerBTG:
             print(f"Traceback: {traceback}")
 
 while True:
+    caminhoDownload = "/home/iasd/Downloads/dadosInvestimento.json" #Mude para o caminho do seu download
     try:
-        arquivo = open("/home/iasd/Downloads/dadosInvestimento.json", 'r', encoding='utf-8') #Mude para o caminho do seu download
+        arquivo = open(caminhoDownload, 'r', encoding='utf-8') 
         break
     except: 
         time.sleep(2)
 arquivo = json.load(arquivo)
 site = CrawlerBTG()
 site.get_Dados(arquivo)
-os.remove("/home/iasd/Downloads/dadosInvestimento.json")
+os.remove(caminhoDownload)
 with open('lista_dados.json', 'w', encoding='utf-8') as arquivo:
     json.dump([perfil.dados for perfil in site.perfis], arquivo, indent=1, ensure_ascii=False)
